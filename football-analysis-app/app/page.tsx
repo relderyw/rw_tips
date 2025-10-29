@@ -1,3 +1,5 @@
+"use client"
+
 import { UpcomingMatches } from "@/components/upcoming-matches"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -43,6 +45,7 @@ export default function Home() {
             <Button 
               variant="ghost" 
               onClick={() => {
+
                 sessionStorage.removeItem('loggedIn')
                 setIsLoggedIn(false)
               }}
