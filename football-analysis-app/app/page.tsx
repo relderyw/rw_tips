@@ -7,7 +7,7 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
-          <Link href="https://rw-tips.netlify.app/visualization">
+          <Link href="/Visualization.html">
             <Button variant="outline">← Voltar</Button>
           </Link>
         </div>
