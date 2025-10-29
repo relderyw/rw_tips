@@ -4,44 +4,35 @@ import { UpcomingMatches } from "@/components/upcoming-matches"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { LoginForm } from "@/components/login-form"
-import { useAuth } from "@/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
   const router = useRouter()
-  
-  // Verificar se o usuário está logado usando sessionStorage
+
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsClient(true)
-      const checkLogin = () => {
-        try {
-          const loggedIn = sessionStorage.getItem('loggedIn') === 'true'
-          console.log('Status de login:', loggedIn)
-          setIsLoggedIn(loggedIn)
-          
-          if (!loggedIn) {
-            console.log('Redirecionando para página inicial...')
-            window.location.href = 'https://rw-tips.netlify.app/index.html'
-          }
-        } catch (error) {
-          console.error('Erro ao verificar login:', error)
-          window.location.href = 'https://rw-tips.netlify.app/index.html'
-        }
-      }
-      
-      // Verificar imediatamente e novamente após um pequeno delay
-      checkLogin()
-      const timer = setTimeout(checkLogin, 500)
-      return () => clearTimeout(timer)
-    }
+    if (typeof window === "undefined") return
+
+    setIsClient(true)
+
+    const loggedIn = sessionStorage.getItem("loggedIn") === "true"
+    console.log("🔐 Status de login:", loggedIn)
+    setIsLoggedIn(loggedIn)
   }, [])
 
-  if (!isClient || !isLoggedIn) {
-    return null // Evita renderização no servidor ou enquanto redireciona
+  // Caso já tenha determinado que o usuário NÃO está logado, redireciona
+  useEffect(() => {
+    if (isClient && isLoggedIn === false) {
+      console.log("🚪 Usuário não autenticado, redirecionando...")
+      window.location.href = "https://rw-tips.netlify.app/index.html"
+    }
+  }, [isClient, isLoggedIn])
+
+  // Evita renderização enquanto carrega o estado
+  if (!isClient || isLoggedIn === null) {
+    return null
   }
 
   return (
@@ -52,17 +43,18 @@ export default function Home() {
             <Button variant="outline">← Voltar</Button>
           </a>
           {isLoggedIn && (
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => {
-                sessionStorage.removeItem('loggedIn')
-                window.location.href = 'https://rw-tips.netlify.app/index.html'
+                sessionStorage.removeItem("loggedIn")
+                window.location.href = "https://rw-tips.netlify.app/index.html"
               }}
             >
               Sair
             </Button>
           )}
         </div>
+
         <div className="mb-8 flex items-center gap-4">
           <img
             src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png"
@@ -71,10 +63,12 @@ export default function Home() {
           />
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Football Analysis</h1>
-            <p className="text-muted-foreground">Analyze upcoming matches and team statistics</p>
+            <p className="text-muted-foreground">
+              Analyze upcoming matches and team statistics
+            </p>
           </div>
         </div>
-        
+
         {isLoggedIn ? (
           <UpcomingMatches isPremium={true} />
         ) : (
