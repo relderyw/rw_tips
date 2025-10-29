@@ -17,8 +17,9 @@ export default function Home() {
 
     setIsClient(true)
 
-    const loggedIn = sessionStorage.getItem("loggedIn") === "true"
-    console.log("🔐 Status de login:", loggedIn)
+    const raw = sessionStorage.getItem("loggedIn")
+    const loggedIn = !!raw && raw !== "false" && raw !== "0"
+    console.log("🔐 Status de login (raw):", raw, "=> parsed:", loggedIn)
     setIsLoggedIn(loggedIn)
   }, [])
 
