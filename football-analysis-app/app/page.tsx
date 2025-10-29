@@ -17,19 +17,19 @@ export default function Home() {
 
     setIsClient(true)
 
+    // Suporte a handoff: se vier com ?loggedIn=true do Netlify, grava e limpa URL
+    const params = new URLSearchParams(window.location.search)
+    const qpLogin = params.get("loggedIn")
+    if (qpLogin === "true") {
+      sessionStorage.setItem("loggedIn", "true")
+      window.history.replaceState({}, "", window.location.pathname)
+    }
+
     const raw = sessionStorage.getItem("loggedIn")
     const loggedIn = !!raw && raw !== "false" && raw !== "0"
     console.log("🔐 Status de login (raw):", raw, "=> parsed:", loggedIn)
     setIsLoggedIn(loggedIn)
   }, [])
-
-  // Caso já tenha determinado que o usuário NÃO está logado, redireciona
-  useEffect(() => {
-    if (isClient && isLoggedIn === false) {
-      console.log("🚪 Usuário não autenticado, redirecionando...")
-      window.location.href = "https://rw-tips.netlify.app/index.html"
-    }
-  }, [isClient, isLoggedIn])
 
   // Evita renderização enquanto carrega o estado
   if (!isClient || isLoggedIn === null) {
