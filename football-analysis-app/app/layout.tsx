@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   description: "Analyze football matches with detailed statistics and team comparisons",
   generator: "v0.app",
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
 }
 
