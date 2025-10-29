@@ -53,7 +53,7 @@ interface MatchData {
   awayTeam: Team
 }
 
-export function UpcomingMatches({ isPremium = false }: { isPremium?: boolean }) {
+export function UpcomingMatches() {
   const [matches, setMatches] = useState<MatchData[]>([])
   const [loading, setLoading] = useState(true)
   const [teamFilter, setTeamFilter] = useState("")
@@ -204,8 +204,7 @@ export function UpcomingMatches({ isPremium = false }: { isPremium?: boolean }) 
               {leagueMatches.map((match) => (
                 <Card key={match.events.id} className="p-4 hover:bg-accent/50 transition-colors">
                   <Link
-                    href={isPremium ? `/match/${match.events.id}?homeTeamId=${match.homeTeam.id}&awayTeamId=${match.awayTeam.id}&tournamentId=${match.tournaments.id}` : "#"}
-                    onClick={(e) => !isPremium && e.preventDefault()}
+                    href={`/match/${match.events.id}?homeTeamId=${match.homeTeam.id}&awayTeamId=${match.awayTeam.id}&tournamentId=${match.tournaments.id}`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -260,16 +259,8 @@ export function UpcomingMatches({ isPremium = false }: { isPremium?: boolean }) 
                       </div>
 
                       <Button variant="ghost" size="sm" className="ml-4">
-                        {isPremium ? "Analyze" : "Bloqueado"}
+                        Analyze
                       </Button>
-                      
-                      {!isPremium && (
-                        <div className="mt-2 text-center">
-                          <span className="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-md">
-                            Faça login para acessar
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </Link>
                 </Card>
