@@ -2,37 +2,24 @@
 
 import { UpcomingMatches } from "@/components/upcoming-matches"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { LoginForm } from "@/components/login-form"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 
 export default function Home() {
-  const [isClient, setIsClient] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
-  const router = useRouter()
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     if (typeof window === "undefined") return
-
-    setIsClient(true)
-
-    // Suporte a handoff: se vier com ?loggedIn=true do Netlify, grava e limpa URL
-    const params = new URLSearchParams(window.location.search)
-    const qpLogin = params.get("loggedIn")
-    if (qpLogin === "true") {
-      sessionStorage.setItem("loggedIn", "true")
-      window.history.replaceState({}, "", window.location.pathname)
-    }
-
     const raw = sessionStorage.getItem("loggedIn")
     const loggedIn = !!raw && raw !== "false" && raw !== "0"
-    console.log("🔐 Status de login (raw):", raw, "=> parsed:", loggedIn)
-    setIsLoggedIn(loggedIn)
+    if (!loggedIn) {
+      window.location.replace("https://rw-tips.netlify.app/index.html")
+      return
+    }
+    setReady(true)
   }, [])
 
-  // Evita renderização enquanto carrega o estado
-  if (!isClient || isLoggedIn === null) {
+  // Não renderiza nada enquanto verifica/aguarda login
+  if (!ready) {
     return null
   }
 
@@ -43,17 +30,6 @@ export default function Home() {
           <a href="https://rw-tips.netlify.app/visualization.html">
             <Button variant="outline">← Voltar</Button>
           </a>
-          {isLoggedIn && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                sessionStorage.removeItem("loggedIn")
-                window.location.href = "https://rw-tips.netlify.app/index.html"
-              }}
-            >
-              Sair
-            </Button>
-          )}
         </div>
 
         <div className="mb-8 flex items-center gap-4">
@@ -70,18 +46,7 @@ export default function Home() {
           </div>
         </div>
 
-        {isLoggedIn ? (
-          <UpcomingMatches isPremium={true} />
-        ) : (
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <UpcomingMatches isPremium={false} />
-            </div>
-            <div className="flex flex-col justify-center">
-              <LoginForm />
-            </div>
-          </div>
-        )}
+        <UpcomingMatches isPremium={true} />
       </div>
     </main>
   )
