@@ -14,12 +14,17 @@ export default function Home() {
   // Verificar se o usuário está logado usando sessionStorage
   useEffect(() => {
     setIsClient(true)
-    const loggedIn = sessionStorage.getItem('loggedIn') === 'true'
-    setIsLoggedIn(loggedIn)
-    
-    // Redirecionar usuários não autenticados para o site do Netlify
-    if (!loggedIn) {
-      window.location.href = 'https://rw-tips.netlify.app/index.html'
+    try {
+      const loggedIn = sessionStorage.getItem('loggedIn') === 'true'
+      setIsLoggedIn(loggedIn)
+      
+      // Redirecionar usuários não autenticados para o site do Netlify
+      if (!loggedIn) {
+        window.location.replace('https://rw-tips.netlify.app/index.html')
+      }
+    } catch (error) {
+      console.error('Erro ao verificar login:', error)
+      window.location.replace('https://rw-tips.netlify.app/index.html')
     }
   }, [])
 
@@ -31,7 +36,7 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
-          <Link href="https://rw-tips.netlify.app/visualization.html">
+          <Link href="https://rw-tips.netlify.app/visualization">
             <Button variant="outline">← Voltar</Button>
           </Link>
           {isLoggedIn && (
