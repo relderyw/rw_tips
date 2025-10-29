@@ -15,20 +15,30 @@ export default function Home() {
   
   // Verificar se o usuário está logado usando sessionStorage
   useEffect(() => {
-    setIsClient(true)
-    try {
-      const loggedIn = sessionStorage.getItem('loggedIn') === 'true'
-      setIsLoggedIn(loggedIn)
-      
-      // Redirecionar usuários não autenticados para o site do Netlify
-      if (!loggedIn && isClient) {
-        window.location.replace('https://rw-tips.netlify.app/index.html')
+    if (typeof window !== 'undefined') {
+      setIsClient(true)
+      const checkLogin = () => {
+        try {
+          const loggedIn = sessionStorage.getItem('loggedIn') === 'true'
+          console.log('Status de login:', loggedIn)
+          setIsLoggedIn(loggedIn)
+          
+          if (!loggedIn) {
+            console.log('Redirecionando para página inicial...')
+            window.location.href = 'https://rw-tips.netlify.app/index.html'
+          }
+        } catch (error) {
+          console.error('Erro ao verificar login:', error)
+          window.location.href = 'https://rw-tips.netlify.app/index.html'
+        }
       }
-    } catch (error) {
-      console.error('Erro ao verificar login:', error)
-      window.location.replace('https://rw-tips.netlify.app/index.html')
+      
+      // Verificar imediatamente e novamente após um pequeno delay
+      checkLogin()
+      const timer = setTimeout(checkLogin, 500)
+      return () => clearTimeout(timer)
     }
-  }, [isClient])
+  }, [])
 
   if (!isClient || !isLoggedIn) {
     return null // Evita renderização no servidor ou enquanto redireciona
@@ -38,16 +48,15 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
-          <Link href="https://rw-tips.netlify.app/visualization.html">
+          <a href="https://rw-tips.netlify.app/visualization.html">
             <Button variant="outline">← Voltar</Button>
-          </Link>
+          </a>
           {isLoggedIn && (
             <Button 
               variant="ghost" 
               onClick={() => {
-
                 sessionStorage.removeItem('loggedIn')
-                setIsLoggedIn(false)
+                window.location.href = 'https://rw-tips.netlify.app/index.html'
               }}
             >
               Sair
