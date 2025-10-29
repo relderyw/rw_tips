@@ -21,14 +21,14 @@ export default function Home() {
       setIsLoggedIn(loggedIn)
       
       // Redirecionar usuários não autenticados para o site do Netlify
-      if (!loggedIn) {
+      if (!loggedIn && isClient) {
         window.location.replace('https://rw-tips.netlify.app/index.html')
       }
     } catch (error) {
       console.error('Erro ao verificar login:', error)
       window.location.replace('https://rw-tips.netlify.app/index.html')
     }
-  }, [])
+  }, [isClient])
 
   if (!isClient || !isLoggedIn) {
     return null // Evita renderização no servidor ou enquanto redireciona
@@ -38,7 +38,7 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
-          <Link href="https://rw-tips.netlify.app/visualization">
+          <Link href="https://rw-tips.netlify.app/visualization.html">
             <Button variant="outline">← Voltar</Button>
           </Link>
           {isLoggedIn && (
