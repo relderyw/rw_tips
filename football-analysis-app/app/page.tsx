@@ -4,20 +4,27 @@ import Link from "next/link"
 import { LoginForm } from "@/components/login-form"
 import { useAuth } from "@/contexts/AuthContext"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const router = useRouter()
   
   // Verificar se o usuário está logado usando sessionStorage
   useEffect(() => {
     setIsClient(true)
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true'
     setIsLoggedIn(loggedIn)
+    
+    // Redirecionar usuários não autenticados para o site do Netlify
+    if (!loggedIn) {
+      window.location.href = 'https://rw-tips.netlify.app/index.html'
+    }
   }, [])
 
-  if (!isClient) {
-    return null // Evita renderização no servidor
+  if (!isClient || !isLoggedIn) {
+    return null // Evita renderização no servidor ou enquanto redireciona
   }
 
   return (

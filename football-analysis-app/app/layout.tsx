@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Football Analysis - Statistics & Predictions",
   description: "Analyze football matches with detailed statistics and team comparisons",
   generator: "v0.app",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({
