@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   title: "Football Analysis - Statistics & Predictions",
   description: "Analyze football matches with detailed statistics and team comparisons",
   generator: "v0.app",
+  icons: {
+    icon: "https://rw-tips.netlify.app/favicon.ico",
+    shortcut: "https://rw-tips.netlify.app/favicon.ico",
+  },
 }
 
 export default function RootLayout({
