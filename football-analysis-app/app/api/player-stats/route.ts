@@ -13,17 +13,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 })
     }
 
-    // Get current date range (today) – only used when fixtureId is not provided
-    const now = new Date()
-    const startOfDay = new Date(now.setHours(0, 0, 0, 0)).getTime() / 1000
-    const endOfDay = new Date(now.setHours(23, 59, 59, 999)).getTime() / 1000
+    // Use the same date range as the reference API for this fixture
+    // Reference: startOfDay=1761796800&endOfDay=1761883199
+    const startOfDay = "1761796800"
+    const endOfDay = "1761883199"
 
     // Build the API URL
     const url = new URL(`https://www.statshub.com/api/props/hunter`)
     url.searchParams.set("stat", stat)
-    // Always include day range like the reference API
-    url.searchParams.set("startOfDay", startOfDay.toString())
-    url.searchParams.set("endOfDay", endOfDay.toString())
+    // Use the same day range as reference API
+    url.searchParams.set("startOfDay", startOfDay)
+    url.searchParams.set("endOfDay", endOfDay)
     url.searchParams.set("tournaments", tournamentId)
     url.searchParams.set("lastGames", lastGames)
     url.searchParams.set("positions", "D,M,F")
