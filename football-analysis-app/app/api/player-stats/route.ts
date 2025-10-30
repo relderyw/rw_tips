@@ -18,8 +18,8 @@ export async function GET(request: Request) {
     const startOfDay = new Date(now.setHours(0, 0, 0, 0)).getTime() / 1000
     const endOfDay = new Date(now.setHours(23, 59, 59, 999)).getTime() / 1000
 
-    // Build the API URL
-    const url = new URL(`https://www.statshub.com/api/props/hunter`)
+    // Build the API URL (use RW Tips public API)
+    const url = new URL(`https://rw-tips.vercel.app/api/player-stats`)
     url.searchParams.set("stat", stat)
     url.searchParams.set("startOfDay", startOfDay.toString())
     url.searchParams.set("endOfDay", endOfDay.toString())
