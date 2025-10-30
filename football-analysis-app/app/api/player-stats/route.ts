@@ -13,17 +13,16 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 })
     }
 
-    // Use the same date range as the reference API for this fixture
-    // Reference: startOfDay=1761796800&endOfDay=1761883199
-    const startOfDay = "1761796800"
-    const endOfDay = "1761883199"
+    // Get current date range (today) automaticamente
+    const now = new Date()
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0)).getTime() / 1000
+    const endOfDay = new Date(now.setHours(23, 59, 59, 999)).getTime() / 1000
 
     // Build the API URL
     const url = new URL(`https://www.statshub.com/api/props/hunter`)
     url.searchParams.set("stat", stat)
-    // Use the same day range as reference API
-    url.searchParams.set("startOfDay", startOfDay)
-    url.searchParams.set("endOfDay", endOfDay)
+    url.searchParams.set("startOfDay", startOfDay.toString())
+    url.searchParams.set("endOfDay", endOfDay.toString())
     url.searchParams.set("tournaments", tournamentId)
     url.searchParams.set("lastGames", lastGames)
     url.searchParams.set("positions", "D,M,F")
@@ -31,24 +30,18 @@ export async function GET(request: Request) {
     url.searchParams.set("venueFilter", "both")
     url.searchParams.set("selectedLeaguesOnly", "false")
     url.searchParams.set("startedMatch", "false")
-    // Align parameters with reference implementation to match results
-    url.searchParams.set("hitRateThreshold", "50")
+    // Parâmetros como na versão anterior
+    url.searchParams.set("hitRateThreshold", "30")
     url.searchParams.set("statThreshold", "1")
     url.searchParams.set("minGamesPlayed", "0")
-    url.searchParams.set("averageThreshold", "0")
+    url.searchParams.set("averageThreshold", "0.4")
     url.searchParams.set("averageComparison", "above")
     url.searchParams.set("showTrend", "false")
     
     if (fixtureId) {
-      // Reference API expects 'fixtureIds' (plural)
-      url.searchParams.set("fixtureIds", fixtureId)
+      // Versão anterior usa 'fixtureId' (singular)
+      url.searchParams.set("fixtureId", fixtureId)
     }
-
-    // Sorting/paging defaults to match the reference URL
-    url.searchParams.set("sortBy", "default")
-    url.searchParams.set("sortDirection", "desc")
-    url.searchParams.set("page", "1")
-    url.searchParams.set("limit", "50")
 
     console.log("[v0] Fetching player stats from:", url.toString())
 
