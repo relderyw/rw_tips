@@ -21,11 +21,9 @@ export async function GET(request: Request) {
     // Build the API URL
     const url = new URL(`https://www.statshub.com/api/props/hunter`)
     url.searchParams.set("stat", stat)
-    // If we don't have a fixtureId, limit by the current day
-    if (!fixtureId) {
-      url.searchParams.set("startOfDay", startOfDay.toString())
-      url.searchParams.set("endOfDay", endOfDay.toString())
-    }
+    // Always include day range like the reference API
+    url.searchParams.set("startOfDay", startOfDay.toString())
+    url.searchParams.set("endOfDay", endOfDay.toString())
     url.searchParams.set("tournaments", tournamentId)
     url.searchParams.set("lastGames", lastGames)
     url.searchParams.set("positions", "D,M,F")
@@ -45,6 +43,12 @@ export async function GET(request: Request) {
       // Reference API expects 'fixtureIds' (plural)
       url.searchParams.set("fixtureIds", fixtureId)
     }
+
+    // Sorting/paging defaults to match the reference URL
+    url.searchParams.set("sortBy", "default")
+    url.searchParams.set("sortDirection", "desc")
+    url.searchParams.set("page", "1")
+    url.searchParams.set("limit", "50")
 
     console.log("[v0] Fetching player stats from:", url.toString())
 
