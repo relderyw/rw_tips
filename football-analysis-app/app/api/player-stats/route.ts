@@ -18,25 +18,12 @@ export async function GET(request: Request) {
     const startOfDay = new Date(now.setHours(0, 0, 0, 0)).getTime() / 1000
     const endOfDay = new Date(now.setHours(23, 59, 59, 999)).getTime() / 1000
 
-    // Build the API URL (use RW Tips public API)
+    // Build the API URL (RW Tips public API) com parâmetros mínimos suportados
     const url = new URL(`https://rw-tips.vercel.app/api/player-stats`)
     url.searchParams.set("stat", stat)
-    url.searchParams.set("startOfDay", startOfDay.toString())
-    url.searchParams.set("endOfDay", endOfDay.toString())
-    url.searchParams.set("tournaments", tournamentId)
+    url.searchParams.set("teamId", teamId!)
+    url.searchParams.set("tournamentId", tournamentId!)
     url.searchParams.set("lastGames", lastGames)
-    url.searchParams.set("positions", "D,M,F")
-    url.searchParams.set("minMinutesPlayed", "0")
-    url.searchParams.set("venueFilter", "both")
-    url.searchParams.set("selectedLeaguesOnly", "false")
-    url.searchParams.set("startedMatch", "false")
-    // Parâmetros como na versão anterior
-    url.searchParams.set("hitRateThreshold", "30")
-    url.searchParams.set("statThreshold", "1")
-    url.searchParams.set("minGamesPlayed", "0")
-    url.searchParams.set("averageThreshold", "0.4")
-    url.searchParams.set("averageComparison", "above")
-    url.searchParams.set("showTrend", "false")
     
     if (fixtureId) {
       // Versão anterior usa 'fixtureId' (singular)
@@ -54,7 +41,12 @@ export async function GET(request: Request) {
     if (!response.ok) {
       const errorBody = await response.text()
       console.error("[v0] API error response:", errorBody)
-      throw new Error(`API responded with status: ${response.status}`)
+      return NextResponse.json({
+        error: "Failed to fetch player stats",
+        status: response.status,
+        url: url.toString(),
+        details: errorBody
+      }, { status: response.status })
     }
 
     const data = await response.json()
