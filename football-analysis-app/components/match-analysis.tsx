@@ -162,6 +162,7 @@ export function MatchAnalysis({ matchId, homeTeamId, awayTeamId, tournamentId }:
             homeTeamId={homeTeamId}
             awayTeamId={awayTeamId}
             tournamentId={tournamentId}
+            fixtureId={matchId}
           />
         </TabsContent>
       </Tabs>

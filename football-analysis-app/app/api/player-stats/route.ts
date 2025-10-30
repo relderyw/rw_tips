@@ -13,7 +13,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 })
     }
 
-    // Get current date range (today)
+    // Get current date range (today) – only used when fixtureId is not provided
     const now = new Date()
     const startOfDay = new Date(now.setHours(0, 0, 0, 0)).getTime() / 1000
     const endOfDay = new Date(now.setHours(23, 59, 59, 999)).getTime() / 1000
@@ -21,8 +21,11 @@ export async function GET(request: Request) {
     // Build the API URL
     const url = new URL(`https://www.statshub.com/api/props/hunter`)
     url.searchParams.set("stat", stat)
-    url.searchParams.set("startOfDay", startOfDay.toString())
-    url.searchParams.set("endOfDay", endOfDay.toString())
+    // If we don't have a fixtureId, limit by the current day
+    if (!fixtureId) {
+      url.searchParams.set("startOfDay", startOfDay.toString())
+      url.searchParams.set("endOfDay", endOfDay.toString())
+    }
     url.searchParams.set("tournaments", tournamentId)
     url.searchParams.set("lastGames", lastGames)
     url.searchParams.set("positions", "D,M,F")
@@ -30,15 +33,17 @@ export async function GET(request: Request) {
     url.searchParams.set("venueFilter", "both")
     url.searchParams.set("selectedLeaguesOnly", "false")
     url.searchParams.set("startedMatch", "false")
-    url.searchParams.set("hitRateThreshold", "30")
+    // Align parameters with reference implementation to match results
+    url.searchParams.set("hitRateThreshold", "50")
     url.searchParams.set("statThreshold", "1")
     url.searchParams.set("minGamesPlayed", "0")
-    url.searchParams.set("averageThreshold", "0.4")
+    url.searchParams.set("averageThreshold", "0")
     url.searchParams.set("averageComparison", "above")
     url.searchParams.set("showTrend", "false")
     
     if (fixtureId) {
-      url.searchParams.set("fixtureId", fixtureId)
+      // Reference API expects 'fixtureIds' (plural)
+      url.searchParams.set("fixtureIds", fixtureId)
     }
 
     console.log("[v0] Fetching player stats from:", url.toString())
